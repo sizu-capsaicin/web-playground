@@ -2,7 +2,7 @@
 
 This program check the stock by scraping with Python.
 
-If you register the command to exec this script with cron or a similar service, you can check the stock.
+If you register the command to exec this script with cron or a similar service, you can check the stock regularly.
 
 If you use cron ...
 
