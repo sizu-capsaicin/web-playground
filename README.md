@@ -1,1 +1,4 @@
-#web-playground
+# web-playground
+
+プログラムを使って web に操作を加える．
+様々な言語を使って色々やってみたい．
