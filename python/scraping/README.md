@@ -1,6 +1,6 @@
 # Python - scraping
 
-This program check the stock of [Game&Watch](https://store-jp.nintendo.com/list/hardware-accessory/hardware/HXA_S_RAAAA.html) by scraping with Python.
+This program check the stock by scraping with Python.
 
 If you register the command to exec this script with cron or a similar service, you can check the stock.
 
