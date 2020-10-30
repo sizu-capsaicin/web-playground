@@ -1,8 +1,19 @@
 # Python - scraping
 
-Scraping with Python.  
+This program check the stock of [Game&Watch](https://store-jp.nintendo.com/list/hardware-accessory/hardware/HXA_S_RAAAA.html) by scraping with Python.
 
-This program check the stock of [Game&Watch](https://store-jp.nintendo.com/list/hardware-accessory/hardware/HXA_S_RAAAA.html) every 5 minutes.
+If you register the command to exec this script with cron or a similar service, you can check the stock.
+
+If you use cron ...
+
+1. exec `crontab -e`
+
+2. register the exec command. "*/5" means execute the command every 5 minutes.
+```
+# min hour day month week command
+*/5 * * * * python3 scraping.py
+```
+
 
 References:
 
@@ -12,3 +23,5 @@ References:
 - [Pythonでファイルの読み込み、書き込み（作成・追記）](https://note.nkmk.me/python-file-io-open-with/)
 - [Beautiful Soup Documentation - find](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#find)
 - [Pythonで一定時間ごとに処理を実行する](https://qiita.com/kurogelee/items/0e5fd8b6a1d1f169179a)
+- [Pythonでメール(gmail)を送信できない場合の解決法](https://www.gocca.work/python-mailerror/)
+- [初心者向けcronの使い方](https://qiita.com/tossh/items/e135bd063a50087c3d6a)
