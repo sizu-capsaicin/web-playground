@@ -12,7 +12,7 @@ HEADERS = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWe
 # keywords to check stock
 KEYWORD = 'カートに入れる'
 # log file path
-LOG_PATH = '/Users/sizu/Favorit/web-playground/python/scraping/var/scraping.log'
+LOG_PATH = 'xxx'
 
 def log(file, data):
   now = datetime.datetime.now()
