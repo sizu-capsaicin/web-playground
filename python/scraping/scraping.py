@@ -7,7 +7,7 @@ import threading
 from lib import output
 
 # URL to scraping
-URL = "https://store-jp.nintendo.com/list/hardware-accessory/hardware/HXA_S_RAAAA.html"
+URL = "xxx"
 # inform which agent watch site
 HEADERS = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"}
 # keywords to check stock
