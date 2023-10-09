@@ -1,0 +1,24 @@
+---
+urls:
+  login_urls: 'xxx' 
+  check_login_url: 'xxx'
+  points_url: 'xxx'
+  points_history_url: 'xxx'
+chrome_profile:
+  user_data_dir: 'xxx'
+  profile_path: 'xxx'
+html_elements:
+  before_login_button_class: 'xxx'
+  after_login_button_class: 'xxx'
+  login_form_title: 'xxx'
+  login_id_keyword: 'xxx'
+  login_pwd_keyword: 'xxx'
+  submit_button_keyword: 'xxx'
+login_info:
+  user_email: 'xxx'
+  user_pwd: 'xxx'
+email:
+  account: 'xxx'
+  pwd: 'xxx'  
+log_path: 'xxx'
+sleep_time: 10

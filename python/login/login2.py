@@ -1,108 +1,142 @@
 from selenium import webdriver
-from lib import output
+# from lib import output
+import datetime
+import smtplib
 import time
+import yaml
 
-# URL to login
-URL_1 = 'xxx'
-URL_2 = 'xxx'
-URL_3 = 'xxx'
-# profile path
-USER_DATA_DIR = 'xxx'
-PROFILE_PATH = 'xxx'
-# URL to check login status
-CHECK_LOGIN_URL = URL_3
-# class of login button
-BEFORE_LOGIN_BUTTON_CLASS = 'xxx'
-AFTER_LOGIN_BUTTON_CLASS = 'xxx'
-# login form keywords
-LOGIN_ID_KEYWORD = 'xxx'
-LOGIN_PWD_KEYWORD = 'xxx'
-SUBMIT_BUTTON_KEYWORD = 'xxx'
-# login info
-USER_EMAIL = 'xxx'
-USER_PWD = 'xxx'
+def load_yml(file_path):
+  with open(file_path, 'r') as yml:
+    config = yaml.safe_load(yml)
+    return config
 
-# URL to check platinum points
-POINTS_URL = 'xxx'
+def log(file, data):
+  now = datetime.datetime.now()
+  log = '[' + str(now) + '] ' + str(data) + '\n'
+  file.write(log)
 
-# log file path
-LOG_PATH = '/Users/sizu/web-playground/python/log/login2.log'
+def send_email(account, pwd, file, text):
+  # log out
+  log(file, 'text of email: ' + str(text))
 
-# sleep time
-SLEEP_TIME = 5
+  # send email
+  server = smtplib.SMTP("smtp.gmail.com", port=587)
+  server.ehlo()
+  server.starttls()
+  server.login(account, pwd)
+  server.sendmail(account, account, text)
 
 if __name__ == "__main__":
+
+  config = load_yml('yml/login_config.yml')
+
+  login_urls = config['urls']['login_urls']
+  check_login_url = config['urls']['check_login_url']
+  points_url = config['urls']['points_url']
+  points_history_url = config['urls']['points_history_url']
+
+  user_data_dir = config['chrome_profile']['user_data_dir']
+  profile_path = config['chrome_profile']['profile_path']
+
+  before_login_button_class = config['html_elements']['before_login_button_class']
+  after_login_button_class = config['html_elements']['after_login_button_class']
+  login_form_title = config['html_elements']['login_for_title']
+  login_id_keyword = config['html_elements']['login_id_keword']
+  login_pwd_keyword = config['html_elements']['login_pwd_keyword']
+  submit_button_keyword = config['html_elements']['submit_button_keyword']
+
+  user_email = config['html_elements']['user_email']
+  user_pwd = config['html_elements']['user_pwd']
+
+  email_account = config['email']['account']
+  email_pwd = config['email']['pwd']
+
+  log_path = config['log_path']
+  sleep_time = int(config['sleep_time'])
+
   # make webdriver object by headless mode
   options = webdriver.ChromeOptions()
   # options.add_argument('--headless')
-  options.add_argument('--user-data-dir=' + USER_DATA_DIR)
-  options.add_argument('--profile-directory=' + PROFILE_PATH)
+  options.add_argument('--user-data-dir=' + user_data_dir)
+  options.add_argument('--profile-directory=' + profile_path)
   options.add_argument('--lang=jp')
   driver = webdriver.Chrome(options=options)
 
   # open log file
-  with open(LOG_PATH, mode='a') as file:
+  with open(log_path, mode='a') as file:
     # check login status
-    driver.get(CHECK_LOGIN_URL)
-    output.log(file, 'get CHECK_LOGIN_URL page: title is ' + driver.title)
-    button_ary = driver.find_elements_by_class_name(BEFORE_LOGIN_BUTTON_CLASS)
-    time.sleep(SLEEP_TIME)
+    driver.get(check_login_url)
+    log(file, 'get CHECK_LOGIN_URL page: title is ' + driver.title)
+    button_ary = driver.find_elements_by_class_name(before_login_button_class)
+    time.sleep(sleep_time)
 
     # if account is not logged in, log in
     if len(button_ary) > 0:
       button = button_ary[0]
       # click login button
       button.click()
-      output.log(file, 'get login page: title is ' + driver.title)
-      time.sleep(SLEEP_TIME)
 
-      # enter and submit login info
-      id_element = driver.find_element_by_id(LOGIN_ID_KEYWORD)
-      id_element.clear()
-      id_element.send_keys(USER_EMAIL)
+      if driver.title == login_form_title:
+        log(file, 'get login page: title is ' + driver.title)
+        time.sleep(sleep_time)
 
-      pwd_element = driver.find_element_by_id(LOGIN_PWD_KEYWORD)
-      pwd_element.clear()
-      pwd_element.send_keys(USER_PWD)
-      time.sleep(SLEEP_TIME)
+        # enter and submit login info
+        id_element = driver.find_element_by_id(login_id_keyword)
+        id_element.clear()
+        id_element.send_keys(user_email)
 
-      submit = driver.find_element_by_class_name(SUBMIT_BUTTON_KEYWORD)
-      if submit.is_enabled():
-        # click submit button
-        submit.click()
-        time.sleep(SLEEP_TIME * 10)
+        pwd_element = driver.find_element_by_id(login_pwd_keyword)
+        pwd_element.clear()
+        pwd_element.send_keys(user_pwd)
+        time.sleep(sleep_time)
 
-        # check login status (success or failure)
-        button_ary = driver.find_elements_by_class_name(AFTER_LOGIN_BUTTON_CLASS)
-        if len(button_ary) > 0:
-          output.log(file, 'success to login!: title is ' + driver.title)
+        submit = driver.find_element_by_class_name(submit_button_keyword)
+        if submit.is_enabled():
+          # click submit button
+          submit.click()
+          time.sleep(sleep_time * 10)
+
+          # check login status (success or failure)
+          button_ary = driver.find_elements_by_class_name(after_login_button_class)
+          if len(button_ary) > 0:
+            log(file, 'success to login!: title is ' + driver.title)
+          else:
+            # send email about login failure
+            subject = 'Login Failure Notification!'
+            text = 'subject:' + subject + '\n\n' + 'Login failure.\n Submit button is enabled, but could not logged in.'
+            send_email(file, text)
+            exit(1)
         else:
-          # send email about login failure
-          subject = 'Login Failure Notification!'
-          text = 'subject:' + subject + '\n\n' + 'Login failure.\n Submit button is enabled, but could not logged in.'
-          output.send_email(file, text)
+          # send email
+          subject = 'login error!'
+          text = 'subject:' + subject + '\n\n' + 'Login failure.\n Submit button is not enabled.'
+          send_email(file, text)
           exit(1)
-      else:
-        # send email
-        subject = 'login error!'
-        text = 'subject:' + subject + '\n\n' + 'Login failure.\n Submit button is not enabled.'
-        output.send_email(file, text)
-        exit(1)
     
     # get pages
-    ary = [URL_1, URL_2, URL_3]
-    for url in ary:
+    for url in login_urls:
       driver.get(url)
-      output.log(file, 'get webpage: URL is ' + url)
+      # if mynintendo page, click mii icon
+      if url == login_urls[2]:
+        mii_elements = driver.find_elements_by_class_name("mii")
+        # if class name of element, click
+        for element in mii_elements:
+          if element.get_attribute("class") == "mii":
+            element.click()
+      log(file, 'get webpage: URL is ' + url)
+      time.sleep(sleep_time)
     
     # check platinum points and send email
-    driver.get(POINTS_URL)
-    output.log(file, 'get points page: title is ' + driver.title)
+    driver.get(points_url)
+    log(file, 'get points page: title is ' + driver.title)
     points = driver.find_element_by_class_name('value').text
     
     subject = 'get points'
     text = 'subject:' + subject + '\n\n' + 'This week points: ' + points
-    output.send_email(file, text)
+    send_email(file, text)
+
+    driver.get(points_history_url)
+    time.sleep(10)
 
   # end of webdriver
   driver.quit()
