@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
   before_login_button_class = config['html_elements']['before_login_button_class']
   after_login_button_class = config['html_elements']['after_login_button_class']
-  login_form_title = config['html_elements']['login_for_title']
+  login_form_title = config['html_elements']['login_form_title']
   login_id_keyword = config['html_elements']['login_id_keword']
   login_pwd_keyword = config['html_elements']['login_pwd_keyword']
   submit_button_keyword = config['html_elements']['submit_button_keyword']
