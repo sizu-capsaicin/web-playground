@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 # from lib import output
 import datetime
 import smtplib
@@ -59,6 +60,7 @@ if __name__ == "__main__":
   # options.add_argument('--headless')
   options.add_argument('--user-data-dir=' + user_data_dir)
   options.add_argument('--profile-directory=' + profile_path)
+  options.add_argument('--disable-blink-features=AutomationControlled')
   options.add_argument('--lang=jp')
   driver = webdriver.Chrome(options=options)
 
@@ -67,7 +69,7 @@ if __name__ == "__main__":
     # check login status
     driver.get(check_login_url)
     log(file, 'get CHECK_LOGIN_URL page: title is ' + driver.title)
-    button_ary = driver.find_elements_by_class_name(before_login_button_class)
+    button_ary = driver.find_elements(By.CLASS_NAME, before_login_button_class)
     time.sleep(sleep_time)
 
     # if account is not logged in, log in
@@ -81,36 +83,36 @@ if __name__ == "__main__":
         time.sleep(sleep_time)
 
         # enter and submit login info
-        id_element = driver.find_element_by_id(login_id_keyword)
+        id_element = driver.find_element(By.ID, login_id_keyword)
         id_element.clear()
         id_element.send_keys(user_email)
 
-        pwd_element = driver.find_element_by_id(login_pwd_keyword)
+        pwd_element = driver.find_element(By.ID, login_pwd_keyword)
         pwd_element.clear()
         pwd_element.send_keys(user_pwd)
         time.sleep(sleep_time)
 
-        submit = driver.find_element_by_class_name(submit_button_keyword)
+        submit = driver.find_element(By.ID, submit_button_keyword)
         if submit.is_enabled():
           # click submit button
           submit.click()
           time.sleep(sleep_time * 10)
 
           # check login status (success or failure)
-          button_ary = driver.find_elements_by_class_name(after_login_button_class)
+          button_ary = driver.find_elements(By.CLASS_NAME, after_login_button_class)
           if len(button_ary) > 0:
             log(file, 'success to login!: title is ' + driver.title)
           else:
             # send email about login failure
             subject = 'Login Failure Notification!'
             text = 'subject:' + subject + '\n\n' + 'Login failure.\n Submit button is enabled, but could not logged in.'
-            send_email(file, text)
+            send_email(email_account, email_pwd, file, text)
             exit(1)
         else:
           # send email
           subject = 'login error!'
           text = 'subject:' + subject + '\n\n' + 'Login failure.\n Submit button is not enabled.'
-          send_email(file, text)
+          send_email(email_account, email_pwd, file, text)
           exit(1)
     
     # get pages
@@ -118,7 +120,7 @@ if __name__ == "__main__":
       driver.get(url)
       # if mynintendo page, click mii icon
       if url == login_urls[2]:
-        mii_elements = driver.find_elements_by_class_name("mii")
+        mii_elements = driver.find_elements(By.CLASS_NAME, "mii")
         # if class name of element, click
         for element in mii_elements:
           if element.get_attribute("class") == "mii":
@@ -129,11 +131,11 @@ if __name__ == "__main__":
     # check platinum points and send email
     driver.get(points_url)
     log(file, 'get points page: title is ' + driver.title)
-    points = driver.find_element_by_class_name('value').text
+    points = driver.find_element(By.CLASS_NAME, 'value').text
     
     subject = 'get points'
     text = 'subject:' + subject + '\n\n' + 'This week points: ' + points
-    send_email(file, text)
+    send_email(email_account, email_pwd, file, text)
 
     driver.get(points_history_url)
     time.sleep(10)

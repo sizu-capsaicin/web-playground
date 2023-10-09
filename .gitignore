@@ -3,3 +3,9 @@ login_config.yml
 
 # ignore log files
 log/
+
+# ignore chrome profile dir
+profile/
+
+# ignore .DS_Store
+.DS_Store
