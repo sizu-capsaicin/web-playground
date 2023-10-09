@@ -45,8 +45,8 @@ if __name__ == "__main__":
   login_pwd_keyword = config['html_elements']['login_pwd_keyword']
   submit_button_keyword = config['html_elements']['submit_button_keyword']
 
-  user_email = config['html_elements']['user_email']
-  user_pwd = config['html_elements']['user_pwd']
+  user_email = config['email']['user_email']
+  user_pwd = config['email']['user_pwd']
 
   email_account = config['email']['account']
   email_pwd = config['email']['pwd']
