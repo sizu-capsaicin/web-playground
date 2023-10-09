@@ -118,6 +118,7 @@ if __name__ == "__main__":
     # get pages
     for url in login_urls:
       driver.get(url)
+      time.sleep(sleep_time)
       # if mynintendo page, click mii icon
       if url == login_urls[2]:
         mii_elements = driver.find_elements(By.CLASS_NAME, "mii")
@@ -125,8 +126,8 @@ if __name__ == "__main__":
         for element in mii_elements:
           if element.get_attribute("class") == "mii":
             element.click()
+            time.sleep(sleep_time)
       log(file, 'get webpage: URL is ' + url)
-      time.sleep(sleep_time)
     
     # check platinum points and send email
     driver.get(points_url)
