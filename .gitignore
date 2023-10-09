@@ -1,0 +1,5 @@
+# ignore config file
+login_config.yml
+
+# ignore log files
+log/
